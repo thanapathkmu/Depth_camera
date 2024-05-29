@@ -70,7 +70,7 @@ def estimate_depth(ir_dot_positions, gray, camera_intrinsics, dot_spacing, circl
 #===================================================================================================================#
 
 # Load the image
-image_path = "dotMatrix/real_dot/capture_image_IR2_20cm.jpg"  # Change to your new image path
+image_path = "dotMatrix/Depth_camera/real_dot/capture_image_IR2_20cm.jpg"  # Change to your new image path
 original_dot = cv2.imread(image_path)
 
 # Convert to grayscale
