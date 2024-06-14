@@ -67,7 +67,7 @@ def estimate_depth(ir_dot_positions, gray, camera_intrinsics, dot_spacing, circl
             continue
 
         depth = (camera_intrinsics[0, 0] * dot_spacing) / (2 * dot_radius)
-        depth = depth * 420  # Adjusting the scale for better visualization
+        depth = depth * 280*1.9  # Adjusting the scale for better visualization
         depths.append(depth)
         # print(f"Estimated depth: {depth}")
 
@@ -76,7 +76,7 @@ def estimate_depth(ir_dot_positions, gray, camera_intrinsics, dot_spacing, circl
 #=======================================================================================================================#
 
 # Load the image
-image_path = "dotMatrix/Depth_camera/real_dot/capture_image_IR2_20cm.jpg"
+image_path = "dotMatrix/Depth_camera/real_dot/capture_image_IR2_40cm.jpg"
 original_dot = cv2.imread(image_path)
 
 # if original_dot is None:
@@ -94,14 +94,18 @@ gray = clahe.apply(gray)
 gray_blur = cv2.GaussianBlur(gray, (3, 3), 0)
 
 # Adaptive Gaussian Thresholding
-adaptive_thresh = cv2.adaptiveThreshold(gray_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 3, 2)
+# adaptive_thresh = cv2.adaptiveThreshold(gray_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 3, 1)
+# adaptive_thresh = cv2.GaussianBlur(adaptive_thresh, (3, 3), 0)
+_ ,adaptive_thresh = cv2.threshold(gray_blur,140,255,cv2.THRESH_BINARY)
+
 
 # Otsu's Thresholding
 _, otsu_thresh = cv2.threshold(gray_blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
 
 # # Invert the threshold images
-# neg_adaptive = cv2.bitwise_not(adaptive_thresh)
+# adaptive_thresh = cv2.bitwise_not(adaptive_thresh)
+
 # neg_otsu = cv2.bitwise_not(otsu_thresh)
 
 # Find contours
@@ -140,8 +144,8 @@ dot_spacing = 0.01  # Example dot spacing in meters
 
 # Adjustable parameters for dot radius estimation
 circle_radius = 28
-min_radius = 10
-max_radius = 50
+min_radius = 20
+max_radius = 36
 # ir_dot_positions = []
 # std_circle_radius = 29
 # circle_radius, min_radius, max_radius = dynamic_radius_parameters(ir_dot_positions, gray, std_circle_radius)
@@ -151,7 +155,7 @@ depths_adaptive, radii_adaptive = estimate_depth(ir_dot_positions_adaptive, gray
 depths_otsu, radii_otsu = estimate_depth(ir_dot_positions_otsu, gray, camera_intrinsics, dot_spacing, circle_radius, min_radius, max_radius)
 
 # Plot the images and results in one figure
-fig, axs = plt.subplots(3, 3, figsize=(18, 18))
+fig, axs = plt.subplots(3, 3, figsize=(8, 8))
 
 axs[0, 0].imshow(cv2.cvtColor(original_dot, cv2.COLOR_BGR2RGB))
 axs[0, 0].set_title('Original Image')
